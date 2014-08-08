@@ -133,41 +133,161 @@ if(is_page('portfolio')
     </script>
 <?php endif; ?>
 
-<?php if(!is_page('blog')) : ?>
-    <script type="text/javascript"
-            src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
-    <script type="text/javascript"
-            src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/jquery.fancybox.js?v=2.1.5"></script>
-    <script type="text/javascript"
-            src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
-    <script type="text/javascript"
-            src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
-    <script type="text/javascript"
-            src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+<script type="text/javascript"
+        src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+<script type="text/javascript"
+        src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/jquery.fancybox.js?v=2.1.5"></script>
+<script type="text/javascript"
+        src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+<script type="text/javascript"
+        src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+<script type="text/javascript"
+        src="<?php echo get_stylesheet_directory_uri(); ?>/fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
 
-    <script type="text/javascript">
-        jQuery(function($){
+<script type="text/javascript">
+    jQuery(function($){
 
-            $('.fancybox')
-                .fancybox({
-                    openEffect: 'none',
-                    closeEffect: 'none',
-                    prevEffect: 'none',
-                    nextEffect: 'none',
-                    padding: 0,
-                    helpers: {
-                        media: {}
-                    },
-                    width: '720px',
-                    height: '410px',
-                    scrolling: 'no'
-                });
+        $('.fancybox')
+            .fancybox({
+                openEffect: 'none',
+                closeEffect: 'none',
+                prevEffect: 'none',
+                nextEffect: 'none',
+                padding: 0,
+                helpers: {
+                    media: {}
+                },
+                width: '720px',
+                height: '410px',
+                scrolling: 'no'
+            });
 
-            $('.photocrati_lightbox_always').fancybox();
+        $('.photocrati_lightbox_always').fancybox();
 
+    });
+</script>
+<script type="text/javascript">
+    //<![CDATA[
+    jQuery.noConflict();
+
+    (function () {
+        var div = document.createElement('div'),
+            ref = document.getElementsByTagName('base')[0] ||
+                document.getElementsByTagName('script')[0];
+
+        div.innerHTML = '&shy;<style> iframe { visibility: hidden; } </style>';
+
+        ref.parentNode.insertBefore(div, ref);
+
+        jQuery(window).load(function() {
+            div.parentNode.removeChild(div);
         });
-    </script>
-<?php endif; ?>
+    })();
+
+    function formatTitle(title, currentArray, currentIndex, currentOpts) {
+        return '<div id="tip7-title"><span><a href="javascript:;" onclick="jQuery.fancybox.close();"><img src="<?php bloginfo('template_url'); ?>/admin/css/closelabel.gif" alt="close label" /></a></span>' + (title && title.length ? '<b>' + title + '</b>' : '' ) + 'Image ' + (currentIndex + 1) + ' of ' + currentArray.length + '</div>';
+    }
+    //]]>
+    jQuery(document).ready(function() {
+
+        jQuery("a.decoy").fancybox({
+            'overlayColor'		: '#0b0b0f',
+            'overlayOpacity'	: 0.8,
+            'centerOnScroll'	: true,
+            <?php if($lightbox_type == 'fancy') { ?>
+            'titlePosition'		: 'outside'
+            <?php } else if($lightbox_type == 'light') { ?>
+            'titlePosition'		: 'inside',
+            'titleFormat'		: formatTitle
+            <?php } else if($lightbox_type == 'thick') { ?>
+            'titlePosition' 	: 'inside',
+            'showNavArrows'		: false,
+            'titleFormat'       : function(title, currentArray, currentIndex, currentOpts) {
+                var gettitle;
+                gettitle = '<span id="fancybox-title-inside">'+title+'<BR><span class="counter">Image ' +  (currentIndex + 1) + ' of ' + currentArray.length + ' &nbsp;&nbsp;';
+                if(currentIndex != 0) {
+                    gettitle = gettitle + '<a onclick="jQuery.fancybox.prev();" style="cursor:pointer;">&laquo; Prev</a> | ';
+                }
+                gettitle = gettitle + '<a onclick="jQuery.fancybox.next();" style="cursor:pointer;">Next &raquo;</a></span>';
+
+                gettitle = gettitle + '<div id="close_button"><a onclick="jQuery.fancybox.close();" style="cursor:pointer;">Close</a></div></span>';
+
+                return gettitle;
+            }
+            <?php } ?>
+            //'href'				: ''+site+''
+        });
+
+        <?php
+
+        $lightbox_selector = '.photocrati_lightbox_always';
+        $lightbox_custom = null;
+
+        switch($lightbox_mode)
+        {
+            case 'always':
+            {
+                $lightbox_custom = 'a:has(\\\'[class*=\\\'wp-image\\\']\\\'), .photocrati_lightbox';
+
+                break;
+            }
+            case 'never':
+            {
+                break;
+            }
+            case 'manual':
+            default:
+            {
+                $lightbox_custom = '.photocrati_lightbox';
+
+                break;
+            }
+        }
+
+        if ($lightbox_custom != null)
+        {
+            $lightbox_selector .= ', ' . $lightbox_custom;
+        }
+
+        if ($lightbox_selector != null)
+        {
+        ?>
+
+        var lighboxSelector = '<?php echo $lightbox_selector; ?>';
+
+        jQuery(lighboxSelector).fancybox({
+            'overlayColor'		: '#0b0b0f',
+            'overlayOpacity'	: 0.8,
+            'centerOnScroll'	: true,
+            <?php if($lightbox_type == 'fancy') { ?>
+            'titlePosition'		: 'outside'
+            <?php } else if($lightbox_type == 'light') { ?>
+            'titlePosition'		: 'inside',
+            'titleFormat'		: formatTitle
+            <?php } else if($lightbox_type == 'thick') { ?>
+            'titlePosition' 	: 'inside',
+            'showNavArrows'		: false,
+            'titleFormat'       : function(title, currentArray, currentIndex, currentOpts) {
+                var gettitle;
+                gettitle = '<span id="fancybox-title-inside">'+title+'<BR><span class="counter">Image ' +  (currentIndex + 1) + ' of ' + currentArray.length + ' &nbsp;&nbsp;';
+                if(currentIndex != 0) {
+                    gettitle = gettitle + '<a onclick="jQuery.fancybox.prev();" style="cursor:pointer;">&laquo; Prev</a> | ';
+                }
+                gettitle = gettitle + '<a onclick="jQuery.fancybox.next();" style="cursor:pointer;">Next &raquo;</a></span>';
+
+                gettitle = gettitle + '<div id="close_button"><a onclick="jQuery.fancybox.close();" style="cursor:pointer;">Close</a></div></span>';
+
+                return gettitle;
+            }
+            <?php } ?>
+        });
+
+        <?php
+        }
+        ?>
+
+    });
+</script>
 
 <?php if(get_post_format() != 'aside') : ?>
     <script type="text/javascript">

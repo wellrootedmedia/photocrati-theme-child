@@ -94,6 +94,7 @@
 		wp_enqueue_script('jquery');
         if ($preset->custom_js) wp_enqueue_script('photocrati-custom-js', site_url('?photocrati-js'));
 	 }
+    wp_enqueue_script('jquery');
 	?>
 
 	<?php wp_head(); ?>
@@ -134,139 +135,6 @@
 
 <script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/scripts/jquery.jplayer.min.js"></script>
 <link rel="stylesheet" type="text/css" href="<?php bloginfo('template_directory'); ?>/scripts/jplayer.style.css" />
-
-<?php if($lightbox_type == 'fancy') { ?>
-	<link rel="stylesheet" href="<?php bloginfo('template_directory'); ?>/admin/css/jquery.fancybox-1.3.4.css" type="text/css" />
-<?php } else if($lightbox_type == 'light') { ?>
-	<link rel="stylesheet" href="<?php bloginfo('template_directory'); ?>/admin/css/jquery.fancybox-1.3.4-light.css" type="text/css" />
-<?php } else if($lightbox_type == 'thick') { ?>
-	<link rel="stylesheet" href="<?php bloginfo('template_directory'); ?>/admin/css/jquery.fancybox-1.3.4-thick.css" type="text/css" />
-<?php } ?>
-
-<script type="text/javascript" src="<?php bloginfo('template_directory'); ?>/admin/js/jquery.fancybox-1.3.4.pack.js"></script>
-
-<script type="text/javascript">
-//<![CDATA[
-jQuery.noConflict();
-
-(function () {
-	var div = document.createElement('div'),
-	ref = document.getElementsByTagName('base')[0] ||
-		    document.getElementsByTagName('script')[0];
-
-	div.innerHTML = '&shy;<style> iframe { visibility: hidden; } </style>';
-
-	ref.parentNode.insertBefore(div, ref);
-
-	jQuery(window).load(function() {
-		div.parentNode.removeChild(div);
-	});
-})();
-
-	function formatTitle(title, currentArray, currentIndex, currentOpts) {
-		return '<div id="tip7-title"><span><a href="javascript:;" onclick="jQuery.fancybox.close();"><img src="<?php bloginfo('template_url'); ?>/admin/css/closelabel.gif" alt="close label" /></a></span>' + (title && title.length ? '<b>' + title + '</b>' : '' ) + 'Image ' + (currentIndex + 1) + ' of ' + currentArray.length + '</div>';
-	}
-	//]]>
-	jQuery(document).ready(function() {
-
-	jQuery("a.decoy").fancybox({
-		'overlayColor'		: '#0b0b0f',
-		'overlayOpacity'	: 0.8,
-		'centerOnScroll'	: true,
-		<?php if($lightbox_type == 'fancy') { ?>
-		'titlePosition'		: 'outside'
-		<?php } else if($lightbox_type == 'light') { ?>
-		'titlePosition'		: 'inside',
-		'titleFormat'		: formatTitle
-		<?php } else if($lightbox_type == 'thick') { ?>
-		'titlePosition' 	: 'inside',
-		'showNavArrows'		: false,
-    	'titleFormat'       : function(title, currentArray, currentIndex, currentOpts) {
-			var gettitle;
-			gettitle = '<span id="fancybox-title-inside">'+title+'<BR><span class="counter">Image ' +  (currentIndex + 1) + ' of ' + currentArray.length + ' &nbsp;&nbsp;';
-			if(currentIndex != 0) {
-			gettitle = gettitle + '<a onclick="jQuery.fancybox.prev();" style="cursor:pointer;">&laquo; Prev</a> | ';
-			}
-			gettitle = gettitle + '<a onclick="jQuery.fancybox.next();" style="cursor:pointer;">Next &raquo;</a></span>';
-
-			gettitle = gettitle + '<div id="close_button"><a onclick="jQuery.fancybox.close();" style="cursor:pointer;">Close</a></div></span>';
-
-			return gettitle;
-    	}
-		<?php } ?>
-		//'href'				: ''+site+''
-	});
-
-	<?php
-
-	$lightbox_selector = '.photocrati_lightbox_always';
-	$lightbox_custom = null;
-
-	switch($lightbox_mode)
-	{
-		case 'always':
-		{
-			$lightbox_custom = 'a:has(\\\'[class*=\\\'wp-image\\\']\\\'), .photocrati_lightbox';
-
-			break;
-		}
-		case 'never':
-		{
-			break;
-		}
-		case 'manual':
-		default:
-		{
-			$lightbox_custom = '.photocrati_lightbox';
-
-			break;
-		}
-	}
-
-	if ($lightbox_custom != null)
-	{
-		$lightbox_selector .= ', ' . $lightbox_custom;
-	}
-
-	if ($lightbox_selector != null)
-	{
-	?>
-
-	var lighboxSelector = '<?php echo $lightbox_selector; ?>';
-
-	jQuery(lighboxSelector).fancybox({
-		'overlayColor'		: '#0b0b0f',
-		'overlayOpacity'	: 0.8,
-		'centerOnScroll'	: true,
-		<?php if($lightbox_type == 'fancy') { ?>
-		'titlePosition'		: 'outside'
-		<?php } else if($lightbox_type == 'light') { ?>
-		'titlePosition'		: 'inside',
-		'titleFormat'		: formatTitle
-		<?php } else if($lightbox_type == 'thick') { ?>
-		'titlePosition' 	: 'inside',
-		'showNavArrows'		: false,
-		'titleFormat'       : function(title, currentArray, currentIndex, currentOpts) {
-			var gettitle;
-			gettitle = '<span id="fancybox-title-inside">'+title+'<BR><span class="counter">Image ' +  (currentIndex + 1) + ' of ' + currentArray.length + ' &nbsp;&nbsp;';
-			if(currentIndex != 0) {
-			gettitle = gettitle + '<a onclick="jQuery.fancybox.prev();" style="cursor:pointer;">&laquo; Prev</a> | ';
-			}
-			gettitle = gettitle + '<a onclick="jQuery.fancybox.next();" style="cursor:pointer;">Next &raquo;</a></span>';
-
-			gettitle = gettitle + '<div id="close_button"><a onclick="jQuery.fancybox.close();" style="cursor:pointer;">Close</a></div></span>';
-
-			return gettitle;
-		}
-		<?php } ?>
-	});
-
-	<?php
-	}
-	?>
-
-});
-</script>
 
 <?php if(is_single() || is_page()) { ?>
 
