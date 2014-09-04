@@ -1,16 +1,41 @@
 <?php
 
-
-// You can insert custom functions below this line
-// -----------------------------------------------
-
 add_filter('show_admin_bar', '__return_false');
+add_theme_support( 'post-formats', array( 'aside', 'video' ) );
+add_post_type_support( 'page', 'post-formats' );
+add_post_type_support( 'my_custom_post_type', 'post-formats' );
+add_theme_support('post-thumbnails');
 
-
+add_action( 'wp_enqueue_scripts', 'mh_load_my_script' );
 function mh_load_my_script() {
     wp_enqueue_script( 'jquery' );
-} add_action( 'wp_enqueue_scripts', 'mh_load_my_script' );
+}
 
+/* display theme version in toolbar */
+add_action( 'admin_bar_menu', 'toolbar_theme_version', 999 );
+function toolbar_theme_version( $wp_admin_bar ) {
+    $my_theme = wp_get_theme();
+    $say = $my_theme->get( 'Name' ) . " [ " . $my_theme->get( 'Version' ) . " ]";
+    //$blogUrl = (url to theme options)
+
+    $args = array(
+        'id'    => 'theme_version',
+        'title' => $say,
+        //'href'  => $blogUrl,
+        'meta'  => array( 'class' => 'current-theme-version' )
+    );
+    $wp_admin_bar->add_node( $args );
+}
+
+add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
+function custom_excerpt_length( $length ) {
+    return 160;
+}
+
+add_filter( 'excerpt_more', 'new_excerpt_more' );
+function new_excerpt_more( $more ) {
+    return ' <a class="read-more" href="'. get_permalink( get_the_ID() ) . '">' . __('Read More', 'your-text-domain') . '</a>';
+}
 
 
 function returnSliderChildren( $id ) {
@@ -25,12 +50,6 @@ function returnSliderChildren( $id ) {
     );
     return $child_pages;
 }
-
-add_theme_support( 'post-formats', array( 'aside', 'video' ) );
-add_post_type_support( 'page', 'post-formats' );
-add_post_type_support( 'my_custom_post_type', 'post-formats' );
-add_theme_support('post-thumbnails');
-
 
 class Menu_With_Description extends Walker_Nav_Menu {
     function start_el(&$output, $item, $depth, $args) {
@@ -62,26 +81,6 @@ class Menu_With_Description extends Walker_Nav_Menu {
     }
 }
 
-function custom_excerpt_length( $length ) {
-    return 160;
-}
-add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
-
-function new_excerpt_more( $more ) {
-    return ' <a class="read-more" href="'. get_permalink( get_the_ID() ) . '">' . __('Read More', 'your-text-domain') . '</a>';
-}
-add_filter( 'excerpt_more', 'new_excerpt_more' );
-
-//function wpa85791_category_posts_per_page( $query ) {
-//    if ( $query->is_category() && $query->is_main_query() )
-//        $query->set( 'posts_per_page', 2 );
-//}
-//add_action( 'pre_get_posts', 'wpa85791_category_posts_per_page' );
-
-
-/*
- * portfolio block
- */
 function portraitBlock() {
     $portraits = query_posts( array(
         'category_name' => 'featured-portraits',
@@ -109,8 +108,6 @@ function is_tree($pid) {
         return false;
     }
 }
-
-
 
 class FooterContactPageImage {
 
